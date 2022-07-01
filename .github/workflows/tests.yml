@@ -1,0 +1,84 @@
+name: "Tests"
+
+on:
+  - pull_request
+  - push
+
+jobs:
+  test:
+    name: PHP:${{ matrix.php }} PHP_INVOKER:${{ toJSON(matrix.php_invoker) }} ALLOW_FAILURES:${{ toJSON(matrix.experimental) }} COVERAGE:${{ toJSON(matrix.coverage) }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        experimental: [false]
+        coverage: [false]
+        php:
+          - "5.3"
+          - "5.4"
+          - "5.5"
+          - "5.6"
+          - "7.0"
+          - "7.1"
+          - "7.2"
+          - "7.3"
+        php_invoker:
+          - true
+          - false
+        include:
+          - php: "7.4"
+            php_invoker: true
+            coverage: true
+          - php: "7.4"
+            php_invoker: false
+            coverage: true
+          - php: "8.0"
+            php_invoker: true
+            experimental: false
+            coverage: false
+          - php: "8.0"
+            php_invoker: false
+            coverage: false
+            experimental: false
+          - php: "8.1"
+            php_invoker: true
+            experimental: true
+            coverage: false
+          - php: "8.1"
+            php_invoker: false
+            experimental: true
+            coverage: false
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          ini-values: display_errors=off, log_errors=on
+          extensions: xdebug, ctype, dom, json, pcre, reflection, spl
+          # Since "The PEAR repository has been removed from Composer 2.0" it makes "composer install" to fail on this repo
+          # revert to composer v1 (and run it outside the checkouted repo, because composer v2 is basically stuck on that error on any command)
+          tools: composer:v1
+        env:
+          # https://github.com/shivammathur/setup-php/issues/407#issuecomment-773675741
+          fail-fast: true
+
+      - name: Install dependencies
+        env:
+          INSTALL_PHP_INVOKER: "${{ matrix.php_invoker == true }}"
+        run: |
+          if [ $INSTALL_PHP_INVOKER == true ]; then composer require --dev --prefer-source phpunit/php-invoker:\>=1.1.0,\<1.2.0; else composer install --dev --prefer-source; fi
+
+      - name: "Run PHPUnit tests"
+        env:
+          FAILURE_ACTION: "${{ matrix.experimental == true }}"
+          WITH_COVERAGE: "${{ matrix.coverage == true }}"
+        run: |
+          export CONFIG_FILE="./build/ci-no-coverage.xml"
+          if [[ $WITH_COVERAGE == true ]]; then export CONFIG_FILE="./build/ci.xml"; fi
+          ./phpunit.php --configuration "${CONFIG_FILE}" || $FAILURE_ACTION;
+
+# vim:ft=yaml:et:ts=2:sw=2
