@@ -92,7 +92,7 @@ class PHPUnit_Framework_MockObject_Matcher_InvokedCount extends PHPUnit_Framewor
         $count = $this->getInvocationCount();
 
         if ($count > $this->expectedCount) {
-            $message = $invocation->toString() . ' ';
+            $message = $invocation->toString() . ' InvokedCount.php';
 
             switch ($this->expectedCount) {
                 case 0: {
