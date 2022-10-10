@@ -1,7 +1,10 @@
 {
     "name": "zf1s/phpunit",
     "replace": {
-        "phpunit/phpunit": "^3.7.38"
+        "phpunit/phpunit": "^3.7.38",
+        "phpunit/php-text-template": "^1.2.1",
+        "phpunit/phpunit-mock-objects": "^1.2.3",
+        "phpunit/php-file-iterator": "^1.4.5"
     },
     "description": "The PHP Unit Testing framework.",
     "type": "library",
@@ -22,13 +25,19 @@
     "support": {
         "issues": "https://github.com/zf1s/phpunit/issues"
     },
+    "repositories": [
+        {
+            "type": "pear",
+            "url": "https://pear.php.net"
+        }
+    ],
     "require": {
         "php": ">=5.3.3",
-        "phpunit/php-file-iterator": "~1.3",
-        "phpunit/php-text-template": "~1.1",
-        "phpunit/php-code-coverage": "~1.2",
+        "phpunit/php-text-template": "^1.2.1",
+        "phpunit/phpunit-mock-objects": "^1.2.3",
+        "phpunit/php-file-iterator": "^1.4.5",
+        "phpunit/php-code-coverage": "^1.2.6",
         "phpunit/php-timer": "1.0.7",
-        "phpunit/phpunit-mock-objects": "~1.2",
         "symfony/yaml": "~2.0",
         "ext-ctype": "*",
         "ext-dom": "*",
@@ -40,12 +49,6 @@
     "require-dev": {
         "pear-pear.php.net/pear": "~1.9|~1.10"
     },
-    "repositories": [
-        {
-            "type": "pear",
-            "url": "https://pear.php.net"
-        }
-    ],
     "suggest": {
         "phpunit/php-invoker": "~1.1"
     },
@@ -54,7 +57,10 @@
     ],
     "autoload": {
         "classmap": [
-            "PHPUnit/"
+            "PHPUnit/",
+            "deps/php-file-iterator/src",
+            "deps/php-text-template/src",
+            "deps/phpunit-mock-objects/PHPUnit"
         ]
     },
     "extra": {
