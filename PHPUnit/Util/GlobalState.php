@@ -201,7 +201,7 @@ class PHPUnit_Util_GlobalState
         // Do not process bootstrap script - composer v2 compatibility
         // https://github.com/composer/composer/issues/10387#issuecomment-1002942296
         // https://github.com/sebastianbergmann/phpunit/pull/4846
-        while (strpos($files[0], 'bin/phpunit') !== false) {
+        while (strpos($files[0], 'bin' . DIRECTORY_SEPARATOR . 'phpunit') !== false) {
             array_shift($files);
         }
 
